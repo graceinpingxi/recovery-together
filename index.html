@@ -1,5 +1,24 @@
 <script>
       <script type="module">
+  // 1. 在匯入清單中加入 initializeAppCheck 和 ReCaptchaEnterpriseProvider
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+import { initializeAppCheck, ReCaptchaEnterpriseProvider } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app-check.js";
+import { getFirestore, ... } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+
+const firebaseConfig = {
+    // ... 你的 config
+};
+
+const app = initializeApp(firebaseConfig);
+
+// 2. 啟動 App Check (請放在其他服務初始化之前)
+const appCheck = initializeAppCheck(app, {
+  provider: new ReCaptchaEnterpriseProvider('你的-reCAPTCHA-SITE-KEY'),
+  isTokenAutoRefreshEnabled: true // 自動刷新 Token
+});
+
+const db = getFirestore(app);
+// ... 後續的 Firestore 代碼
   // 1. 匯入 Firebase 必要的功能
   import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
   import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
