@@ -1,18 +1,102 @@
 <script>
-        function postMessage() {
-            const input = document.getElementById('messageInput');
-            const board = document.getElementById('messageBoard');
+      <script type="module">
+  // 1. 匯入 Firebase 必要的功能
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+  import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+  // 2. 這裡貼上你剛剛獲取的 Firebase Config
+  const firebaseConfig = {
+    apiKey: "AIzaSyCBEVJ9xmurbqhpu9c-er1F6EG3cI8NttI",
+    authDomain: "recovery-together.firebaseapp.com",
+    projectId: "recovery-together",
+    storageBucket: "recovery-together.firebasestorage.app",
+    messagingSenderId: "711126415467",
+    appId: "711126415467:web:228c2df6b32eb196f4592e"
+  };
 
-            if (input.value.trim() === "") {
-                alert("請輸入內容！");
-                return;
-            }
+  // 3. 初始化 Firebase 與 Firestore
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const messagesCol = collection(db, "messages");
 
-            const card = document.createElement('div');
-            card.className = 'message-card';
-            card.innerText = input.value;
-            board.prepend(card);
-            input.value = "";
+  // --- A. 發佈訊息到雲端 ---
+  window.postMessage = async function() {
+    const input = document.getElementById('messageInput');
+    const text = input.value.trim();
+
+    if (text === "") {
+        alert("請輸入內容！");
+        return;
+    }
+
+    try {
+        await addDoc(messagesCol, {
+            text: text,
+            createdAt: serverTimestamp() // 紀錄伺服器時間
+        });
+        input.value = ""; // 清空輸入框
+    } catch (e) {
+        console.error("發布失敗: ", e);
+    }
+  };
+
+  // --- B. 從雲端即時讀取訊息 ---
+  const q = query(messagesCol, orderBy("createdAt", "desc"));
+  onSnapshot(q, (snapshot) => {
+    const board = document.getElementById('messageBoard');
+    board.innerHTML = ""; // 先清空，再重新渲染
+    
+    snapshot.forEach((doc) => {
+        const data = doc.data();
+        const card = document.createElement('div');
+        card.className = 'message-card';
+        card.innerText = data.text;
+        board.appendChild(card);
+    });
+  });
+</script>
+  };
+
+  // 3. 初始化 Firebase 與 Firestore
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const messagesCol = collection(db, "messages");
+
+  // --- A. 發佈訊息到雲端 ---
+  window.postMessage = async function() {
+    const input = document.getElementById('messageInput');
+    const text = input.value.trim();
+
+    if (text === "") {
+        alert("請輸入內容！");
+        return;
+    }
+
+    try {
+        await addDoc(messagesCol, {
+            text: text,
+            createdAt: serverTimestamp() // 紀錄伺服器時間
+        });
+        input.value = ""; // 清空輸入框
+    } catch (e) {
+        console.error("發布失敗: ", e);
+    }
+  };
+
+  // --- B. 從雲端即時讀取訊息 ---
+  const q = query(messagesCol, orderBy("createdAt", "desc"));
+  onSnapshot(q, (snapshot) => {
+    const board = document.getElementById('messageBoard');
+    board.innerHTML = ""; // 先清空，再重新渲染
+    
+    snapshot.forEach((doc) => {
+        const data = doc.data();
+        const card = document.createElement('div');
+        card.className = 'message-card';
+        card.innerText = data.text;
+        board.appendChild(card);
+    });
+  });
+</script>
         }
     </script>
 </body>
