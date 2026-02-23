@@ -1,12 +1,21 @@
-<!DOCTYPE html>
-<html lang="zh-Hant">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>一起復元 | Recovery Together</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
+<script>
+        function postMessage() {
+            const input = document.getElementById('messageInput');
+            const board = document.getElementById('messageBoard');
+
+            if (input.value.trim() === "") {
+                alert("請輸入內容！");
+                return;
+            }
+
+            const card = document.createElement('div');
+            card.className = 'message-card';
+            card.innerText = input.value;
+            board.prepend(card);
+            input.value = "";
+        }
+    </script>
+</body>
     <nav>
         <h1>Recovery Together 一起復元</h1>
     </nav>
