@@ -79,20 +79,40 @@
     }
   };
 
-  // --- B. 從雲端即時讀取訊息 ---
+ // --- B. 從雲端即時讀取訊息並顯示時間 ---
   const q = query(messagesCol, orderBy("createdAt", "desc"));
   onSnapshot(q, (snapshot) => {
     const board = document.getElementById('messageBoard');
-    board.innerHTML = ""; // 先清空，再重新渲染
+    board.innerHTML = ""; 
     
     snapshot.forEach((doc) => {
         const data = doc.data();
+        
+        // 建立卡片容器
         const card = document.createElement('div');
         card.className = 'message-card';
-        card.innerText = data.text;
+
+        // 處理時間格式 (處理 Firebase 剛寫入時可能產生的短暫 null 值)
+        let timeString = "傳送中...";
+        if (data.createdAt) {
+            const date = data.createdAt.toDate(); // 將 Firebase 時間轉為 JS Date 物件
+            timeString = date.toLocaleString('zh-TW', { 
+                hour12: true, 
+                month: 'short', 
+                day: 'numeric', 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            });
+        }
+
+        // 組合內容：文字 + 時間
+        card.innerHTML = `
+            <div class="message-text">${data.text}</div>
+            <div class="message-time">${timeString}</div>
+        `;
+        
         board.appendChild(card);
-  });
-</script>
+    });
         
     </script>
 </body>
