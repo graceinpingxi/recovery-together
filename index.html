@@ -58,12 +58,6 @@
         // 1. 初始化 App
         const app = initializeApp(firebaseConfig);
 
-        // 2. 初始化 App Check (使用你申請的 Site Key)
-        const appCheck = initializeAppCheck(app, {
-            provider: new ReCaptchaV3Provider('6LfrUXUsAAAAAIyuyzyIFKT5tx_eDiD6YCyyKPyA'),
-            isTokenAutoRefreshEnabled: true
-        });
-
         // 3. 初始化資料庫
         const db = getFirestore(app);
         const messagesCol = collection(db, "messages");
