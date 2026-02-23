@@ -9,7 +9,7 @@
         h2 { color: #4a90e2; text-align: center; }
         input, textarea { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
         button { width: 100%; padding: 12px; background: #4a90e2; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; }
-        .card { background: #fff; border-bottom: 1px solid #eee; padding: 15px 0; margin-top: 10px; }
+        .card { background: #fff; border-bottom: 1px solid #eee; padding: 15px 0; }
         .card-info { font-size: 0.8em; color: #999; display: flex; justify-content: space-between; }
         .card-name { color: #4a90e2; font-weight: bold; }
     </style>
@@ -17,9 +17,9 @@
 <body>
     <div class="box">
         <h2>一起復元</h2>
-        <input type="text" id="name" placeholder="你的暱稱">
-        <textarea id="msg" placeholder="寫下鼓勵的話..."></textarea>
-        <button id="btn">發佈訊息</button>
+        <input type="text" id="nameInput" placeholder="你的暱稱">
+        <textarea id="msgInput" placeholder="寫下鼓勵的話..."></textarea>
+        <button id="sendBtn">發佈訊息</button>
         <div id="list"></div>
     </div>
 
@@ -27,7 +27,6 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
         import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
-        // 你的 Firebase 配置
         const firebaseConfig = {
             apiKey: "AIzaSyCBEVJ9xmurbqhpu9c-er1F6EG3cI8NttI",
             authDomain: "recovery-together.firebaseapp.com",
@@ -39,47 +38,43 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
-        const msgCol = collection(db, "messages");
+        const colRef = collection(db, "messages");
 
-        // 發送功能
-        document.getElementById('btn').onclick = async () => {
-            const name = document.getElementById('name').value.trim() || "匿名夥伴";
-            const text = document.getElementById('msg').value.trim();
+        // 發送訊息
+        document.getElementById('sendBtn').onclick = async () => {
+            const name = document.getElementById('nameInput').value.trim() || "匿名夥伴";
+            const text = document.getElementById('msgInput').value.trim();
             if(!text) return alert("請輸入內容");
 
             try {
-                // 這裡會直接嘗試寫入雲端
-                await addDoc(msgCol, {
+                await addDoc(colRef, {
                     nickname: name,
                     text: text,
                     createdAt: serverTimestamp()
                 });
-                document.getElementById('msg').value = "";
-                console.log("雲端收到訊息了！");
+                document.getElementById('msgInput').value = "";
             } catch (err) {
-                console.error("發送出錯:", err);
-                alert("發送失敗，原因：" + err.message);
+                console.error("發送失敗:", err);
+                alert("發送失敗，請確認 Firebase 已建立資料庫！");
             }
         };
 
-        // 監聽功能
-        const q = query(msgCol, orderBy("createdAt", "desc"));
+        // 即時監聽
+        const q = query(colRef, orderBy("createdAt", "desc"));
         onSnapshot(q, (snap) => {
             const listDiv = document.getElementById('list');
             listDiv.innerHTML = "";
             snap.forEach(doc => {
-                const data = doc.data();
-                // 處理伺服器回傳的時間
-                const time = data.createdAt ? data.createdAt.toDate().toLocaleString() : "同步中...";
+                const d = doc.data();
+                const time = d.createdAt ? d.createdAt.toDate().toLocaleString() : "同步中...";
                 listDiv.innerHTML += `
                     <div class="card">
                         <div class="card-info">
-                            <span class="card-name">${data.nickname}</span>
+                            <span class="card-name">${d.nickname}</span>
                             <span>${time}</span>
                         </div>
-                        <div style="margin-top:5px;">${data.text}</div>
-                    </div>
-                `;
+                        <div style="margin-top:5px; line-height:1.5;">${d.text}</div>
+                    </div>`;
             });
         });
     </script>
