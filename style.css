@@ -17,9 +17,22 @@ box-sizing: border-box
     font-size: 1.1rem;
     line-height: 1.5;
 }
+.message-header {
+    display: flex;
+    justify-content: space-between; /* 暱稱在左，時間在右 */
+    align-items: center;
+    margin-bottom: 8px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 5px;
+}
+
+.message-nickname {
+    font-weight: bold;
+    color: #4a90e2; /* 讓暱稱顯眼一點 */
+    font-size: 0.95rem;
+}
 
 .message-time {
-    font-size: 0.8rem;
-    color: #888;
-    text-align: right; /* 讓時間靠右對齊 */
+    font-size: 0.75rem;
+    color: #aaa;
 }
