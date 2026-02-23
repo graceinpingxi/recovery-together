@@ -57,8 +57,7 @@
 
         // 1. 初始化 App
         const app = initializeApp(firebaseConfig);
-
-        // 3. 初始化資料庫
+        // 2. 初始化資料庫
         const db = getFirestore(app);
         const messagesCol = collection(db, "messages");
 
