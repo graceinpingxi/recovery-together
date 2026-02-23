@@ -1,20 +1,27 @@
 <script>
       <script type="module">
-  // 1. 在匯入清單中加入 initializeAppCheck 和 ReCaptchaEnterpriseProvider
+// 1. 確保匯入了 App Check 模組
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
-import { initializeAppCheck, ReCaptchaEnterpriseProvider } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app-check.js";
+      self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+import { initializeAppCheck, ReCaptchaV3Provider } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app-check.js";
 import { getFirestore, ... } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
 const firebaseConfig = {
-    // ... 你的 config
+    // ... 你的原有配置
 };
 
 const app = initializeApp(firebaseConfig);
 
-// 2. 啟動 App Check (請放在其他服務初始化之前)
+// 2. 啟動 App Check
+// 如果你申請的是 reCAPTCHA v3，請使用 ReCaptchaV3Provider
+// 如果是 Enterprise 版本，請使用 ReCaptchaEnterpriseProvider
 const appCheck = initializeAppCheck(app, {
-  provider: new ReCaptchaEnterpriseProvider('你的-reCAPTCHA-SITE-KEY'),
-  isTokenAutoRefreshEnabled: true // 自動刷新 Token
+  provider: new ReCaptchaV3Provider('6LfrUXUsAAAAAIyuyzyIFKT5tx_eDiD6YCyyKPyA'),
+  isTokenAutoRefreshEnabled: true 
+});
+
+const db = getFirestore(app);
+// ... 後續 Firestore 代碼
 });
 
 const db = getFirestore(app);
